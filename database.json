@@ -1,0 +1,1 @@
+{"devices": {"1": {"device_name": "3D-Drucker A", "managed_by_user_id": "admin@mci.edu", "is_active": true}, "2": {"device_name": "Laser Cutter", "managed_by_user_id": "tech@mci.edu", "is_active": true}}}

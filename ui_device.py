@@ -2,6 +2,8 @@ import streamlit as st
 from queries import find_devices
 from devices import Device
 
+if "device_status" not in st.session_state:
+    st.session_state.device_status = {}
 # Eine Überschrift der ersten Ebene
 st.write("# Gerätemanagement")
 
@@ -19,7 +21,7 @@ if devices_in_db:
     if current_device_name in devices_in_db:
         loaded_device = Device.find_by_attribute("device_name", current_device_name)
         if loaded_device:
-            st.write(f"Loaded Device: {loaded_device}")
+            st.write(f"Loaded Device: {current_device_name}")
         else:
             st.error("Device not found in the database.")
 
@@ -41,5 +43,26 @@ else:
     st.write("No devices found.")
     st.stop()
 
-st.write("Session State:")
-st.session_state
+col1, col2, col3 = st.columns(3)
+with col1:
+    if st.button("Frei"):
+        st.session_state.device_status[current_device_name] = "frei"
+
+with col2:
+    if st.button("Besetzt"):
+        st.session_state.device_status[current_device_name] = "besetzt"
+
+with col3:
+    if st.button("Wartung"):
+        st.session_state.device_status[current_device_name] = "wartung"
+
+
+if current_device_name not in st.session_state.device_status:
+    st.session_state.device_status[current_device_name] = "frei"
+
+#st.write("Session State:")
+#st.session_state
+
+def init_ui_state():
+    if "device_status" not in st.session_state:
+        st.session_state.device_status = {}
