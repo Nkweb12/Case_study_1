@@ -43,6 +43,9 @@ else:
     st.write("No devices found.")
     st.stop()
 
+st.markdown("### Gerätestatus")
+
+
 col1, col2, col3 = st.columns(3)
 with col1:
     if st.button("Frei"):
@@ -60,9 +63,14 @@ with col3:
 if current_device_name not in st.session_state.device_status:
     st.session_state.device_status[current_device_name] = "frei"
 
+status = st.session_state.device_status[current_device_name]
+
+if status == "frei":
+    st.success("🟢 Gerät ist frei")
+elif status == "besetzt":
+    st.warning("🔴 Gerät ist besetzt")
+elif status == "wartung":
+    st.info("🟡 Gerät ist in Wartung")
 #st.write("Session State:")
 #st.session_state
 
-def init_ui_state():
-    if "device_status" not in st.session_state:
-        st.session_state.device_status = {}
