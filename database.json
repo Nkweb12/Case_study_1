@@ -1,1 +1,10 @@
-{"devices": {"1": {"device_name": "3D-Drucker A", "managed_by_user_id": "admin@mci.edu", "is_active": true}, "2": {"device_name": "Laser Cutter", "managed_by_user_id": "tech@mci.edu", "is_active": true}}}
+{
+  "users": [
+    { "id": "u1", "name": "Alice" },
+    { "id": "u2", "name": "Bob" }
+  ],
+  "devices": [
+    { "name": "Laptop A", "managed_by_user_id": "u1", "is_active": true },
+    { "name": "Tablet B", "managed_by_user_id": "u2", "is_active": true }
+  ]
+}
