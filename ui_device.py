@@ -1,6 +1,8 @@
 import streamlit as st
 from queries import find_devices
 from devices import Device
+from callback import set_device_status
+
 
 if "device_status" not in st.session_state:
     st.session_state.device_status = {}
@@ -72,5 +74,5 @@ elif status == "besetzt":
 elif status == "wartung":
     st.info("🟡 Gerät ist in Wartung")
 #st.write("Session State:")
-#st.session_state
+st.session_state
 
