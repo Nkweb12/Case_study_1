@@ -10,8 +10,10 @@ st.write("Grundgerüst: UI -> Logik -> Datenbank (JSON)")
 seite = st.sidebar.selectbox("Navigation", ["Devices", "Reservierungen"])
 
 if seite == "Devices":
+    # ui_device nima render() - koda se izvede že pri importu
     pass
-elif seite == "Reservierungen":
+else:
     ui_reservations.render()
+
 
 
