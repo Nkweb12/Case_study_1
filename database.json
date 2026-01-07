@@ -1,32 +1,36 @@
 {
-  "users": [
-    {
-      "id": "u1",
-      "name": "Alice"
+  "users": {
+    "admin@mci.edu": {
+      "name": "Admin"
     },
-    {
-      "id": "u2",
-      "name": "Bob"
+    "tech@mci.edu": {
+      "name": "Tech"
     }
-  ],
-  "devices": [
-    {
-      "name": "Laptop A",
-      "managed_by_user_id": "u1",
+  },
+  "devices": {
+    "1": {
+      "device_name": "3D-Drucker A",
+      "managed_by_user_id": "admin@mci.edu",
       "is_active": true
     },
-    {
-      "name": "Tablet B",
-      "managed_by_user_id": "u2",
+    "2": {
+      "device_name": "Laser Cutter",
+      "managed_by_user_id": "tech@mci.edu",
       "is_active": true
     }
-  ],
+  },
   "reservations": [
     {
-      "device_name": "Laptop A",
-      "user_id": "u1",
-      "start": "2026-01-07T09:15",
-      "end": "2026-01-07T10:45"
+      "device_id": "1",
+      "user_id": "admin@mci.edu",
+      "start": "2026-01-07T09:00",
+      "end": "2026-01-07T10:00"
+    },
+    {
+      "device_id": "2",
+      "user_id": "admin@mci.edu",
+      "start": "2026-01-07T14:00",
+      "end": "2026-01-07T15:30"
     }
   ]
 }

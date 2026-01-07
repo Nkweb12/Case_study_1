@@ -1,77 +1,84 @@
 import streamlit as st
-from queries import find_devices, _load_db, _save_db
-
-# session state init
-if "device_status" not in st.session_state:
-    st.session_state.device_status = {}
-
-st.write("# Gerätemanagement")
-st.write("## Geräteauswahl")
-
-devices_in_db = find_devices()  # list[dict]
-
-if not devices_in_db:
-    st.error("No devices found.")
-    st.stop()
+from queries import find_devices, update_device
 
 
-device_names = [d.get("name") for d in devices_in_db if isinstance(d, dict) and d.get("name")]
+def render():
+    # session state init for simple status buttons (optional UI state)
+    if "device_status" not in st.session_state:
+        st.session_state.device_status = {}
 
-if not device_names:
-    st.error("Devices exist, but none has a valid 'name'.")
-    st.stop()
+    st.write("# Gerätemanagement")
+    st.write("## Geräteauswahl")
 
-current_device_name = st.selectbox("Gerät auswählen", options=device_names, key="sbDevice")
+    devices = find_devices()  # List[dict]
+    if not devices:
+        st.error("Keine Geräte in der Datenbank vorhanden.")
+        st.stop()
 
+    # Build label -> id mapping (always store ID as string)
+    id_by_label = {}
+    for d in devices:
+        if not isinstance(d, dict):
+            continue
+        did = d.get("id")
+        if did is None:
+            continue
+        did = str(did)
+        dn = d.get("device_name") or f"(ohne Name)"
+        label = f"{dn} (ID {did})"
+        id_by_label[label] = did
 
-loaded_device = next((d for d in devices_in_db if d.get("name") == current_device_name), None)
+    labels = list(id_by_label.keys())
+    if not labels:
+        st.error("Devices exist, but none has a valid ID / device_name.")
+        st.stop()
 
-if not loaded_device:
-    st.error("Device not found in the database.")
-    st.stop()
+    current_label = st.selectbox("Gerät auswählen", options=labels, key="sbDevice")
+    device_id = id_by_label[current_label]  # string
 
-st.write(f"Loaded Device: {current_device_name}")
+    # Find selected device dict (compare IDs as string)
+    loaded = next((d for d in devices if isinstance(d, dict) and str(d.get("id")) == device_id), None)
+    if not loaded:
+        st.error("Gerät wurde nicht gefunden.")
+        st.stop()
 
-with st.form("Device"):
-    st.write(loaded_device.get("name", ""))
+    st.write(f"Loaded Device: {loaded.get('device_name')} (ID {device_id})")
 
-    text_input_val = st.text_input(
-        "Geräte-Verantwortlicher",
-        value=loaded_device.get("managed_by_user_id", "")
-    )
+    with st.form("device_form", clear_on_submit=False):
+        st.write(loaded.get("device_name", ""))
 
-    submitted = st.form_submit_button("Submit")
-    if submitted:
-        
-        loaded_device["managed_by_user_id"] = text_input_val
+        managed_val = st.text_input(
+            "Geräte-Verantwortlicher (User-ID / E-Mail)",
+            value=loaded.get("managed_by_user_id", "")
+        )
+        active_val = st.checkbox(
+            "Aktiv",
+            value=bool(loaded.get("is_active", True))
+        )
 
-        
-        db = _load_db()
-        devs = db.get("devices", [])
+        submitted = st.form_submit_button("Speichern")
+        if submitted:
+            update_device(
+                device_id=device_id,
+                managed_by_user_id=managed_val.strip(),
+                is_active=active_val
+            )
+            st.success("Gespeichert.")
+            st.rerun()
 
-        for d in devs:
-            if d.get("name") == current_device_name:
-                d["managed_by_user_id"] = text_input_val
-                break
+    # Optional status buttons (UI-only, not stored in DB)
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("Frei"):
+            st.session_state.device_status[device_id] = "frei"
+    with col2:
+        if st.button("Besetzt"):
+            st.session_state.device_status[device_id] = "besetzt"
+    with col3:
+        if st.button("Wartung"):
+            st.session_state.device_status[device_id] = "wartung"
 
-        db["devices"] = devs
-        _save_db(db)
+    if device_id not in st.session_state.device_status:
+        st.session_state.device_status[device_id] = "frei"
 
-        st.success("Data stored.")
-        st.rerun()
-
-# status 
-col1, col2, col3 = st.columns(3)
-with col1:
-    if st.button("Frei"):
-        st.session_state.device_status[current_device_name] = "frei"
-with col2:
-    if st.button("Besetzt"):
-        st.session_state.device_status[current_device_name] = "besetzt"
-with col3:
-    if st.button("Wartung"):
-        st.session_state.device_status[current_device_name] = "wartung"
-
-if current_device_name not in st.session_state.device_status:
-    st.session_state.device_status[current_device_name] = "frei"
-
+    st.info(f"Status (nur UI): {st.session_state.device_status[device_id]}")
