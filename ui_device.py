@@ -1,11 +1,14 @@
+from operator import add
 import streamlit as st
-from queries import find_devices, update_device
+from queries import find_devices, update_device, add_device, delete_device, get_users
 
 
 def render():
     # session state init for simple status buttons (optional UI state)
     if "device_status" not in st.session_state:
         st.session_state.device_status = {}
+    users = get_users()
+    user_options = {u["name"] + f' ({u["id"]})': u["id"] for u in users}
 
     st.write("# Gerätemanagement")
     st.write("## Geräteauswahl")
@@ -47,10 +50,23 @@ def render():
     with st.form("device_form", clear_on_submit=False):
         st.write(loaded.get("device_name", ""))
 
-        managed_val = st.text_input(
-            "Geräte-Verantwortlicher (User-ID / E-Mail)",
-            value=loaded.get("managed_by_user_id", "")
+        current_manager = loaded.get("managed_by_user_id", "")
+
+        labels = list(user_options.keys())
+        values = list(user_options.values())
+
+        if current_manager in values:
+            index = values.index(current_manager)
+        else:
+            index = 0
+
+        managed_val = st.selectbox(
+            "Geräte-Verantwortlicher",
+            options=labels,
+            index=index
         )
+        managed_user_id = user_options[managed_val]
+
         active_val = st.checkbox(
             "Aktiv",
             value=bool(loaded.get("is_active", True))
@@ -65,3 +81,26 @@ def render():
             )
             st.success("Gespeichert.")
             st.rerun()
+
+    st.write("## Gerät löschen")
+    
+    if st.button("❌ Gerät endgültig löschen"):
+        delete_device(device_id)
+        st.warning("Gerät gelöscht.")
+        st.rerun()
+
+    st.write("## Neues Gerät")
+
+    with st.form("add_device_form"):
+        new_name = st.text_input("Gerätename")
+        new_manager = st.text_input("Verantwortlicher (User-ID)")
+        add = st.form_submit_button("Gerät anlegen")
+
+    if add:
+        if not new_name:
+            st.error("Gerätename fehlt.")
+        else:
+            add_device(new_name.strip(), new_manager.strip())
+            st.success("Gerät hinzugefügt.")
+            st.rerun()
+

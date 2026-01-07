@@ -213,3 +213,39 @@ def update_device(device_id: str, managed_by_user_id: Optional[str] = None, is_a
 
     db["devices"] = devs
     _save_db(db)
+
+def add_user(user_id: str, name: str) -> None:
+    db = _load_db()
+    users = db.get("users", {})
+    users[str(user_id)] = {"name": name}
+    db["users"] = users
+    _save_db(db)
+
+
+def delete_user(user_id: str) -> None:
+    db = _load_db()
+    users = db.get("users", {})
+    users.pop(str(user_id), None)
+    db["users"] = users
+    _save_db(db)
+
+def add_device(device_name: str, managed_by_user_id: str) -> None:
+    db = _load_db()
+    devices = db.get("devices", {})
+    new_id = str(max([int(k) for k in devices.keys()] + [0]) + 1)
+
+    devices[new_id] = {
+        "device_name": device_name,
+        "managed_by_user_id": managed_by_user_id,
+        "is_active": True
+    }
+    db["devices"] = devices
+    _save_db(db)
+
+
+def delete_device(device_id: str) -> None:
+    db = _load_db()
+    devices = db.get("devices", {})
+    devices.pop(str(device_id), None)
+    db["devices"] = devices
+    _save_db(db)
