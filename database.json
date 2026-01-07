@@ -5,12 +5,15 @@
     },
     "tech@mci.edu": {
       "name": "Tech"
+    },
+    "nils@mci.edu": {
+      "name": "Nils"
     }
   },
   "devices": {
     "1": {
       "device_name": "3D-Drucker A",
-      "managed_by_user_id": "admin@mci.edu",
+      "managed_by_user_id": "Nils (nils@mci.edu)",
       "is_active": true
     },
     "2": {
