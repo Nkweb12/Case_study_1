@@ -14,11 +14,9 @@
 - Problems and print statements are shown in the terminal
 
 ## Current Implementation Overview
-
 The application currently provides three main functional modules, accessible via the sidebar navigation.
 
 ### User Management
-
 The user management module allows administrators to manage system users.
 
 **Functionality:**
@@ -33,7 +31,6 @@ All user data is stored persistently in the JSON-based database.
 ![User Management](screenshots/user_management.png)
 
 ### Device Management
-
 The device management module is used to manage technical devices.
 
 **Functionality:**
@@ -50,10 +47,7 @@ All changes are written directly to the database.
 
 ![Device Management](screenshots/device_management.png)
 
----
-
 ### Reservation System
-
 The reservation system allows users to reserve devices for specific time periods.
 
 **Functionality:**
@@ -66,10 +60,7 @@ The reservation system allows users to reserve devices for specific time periods
 
 ![Reservation System](screenshots/reservation_system.png)
 
----
-
 ## Testing
-
 - Run the tests with `python -m unittest discover -s tests -p "test_*.py"`
 - The tests are located in the `tests` folder
 
