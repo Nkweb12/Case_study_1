@@ -23,7 +23,7 @@ class MaintenanceManager:
             return None
 
         return next_date
-
+ 
     @staticmethod
     def get_quarter_bounds(date):
         y, m = date.year, date.month
