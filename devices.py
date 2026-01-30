@@ -14,5 +14,5 @@ class Device:
         self.is_active = active
         queries.set_device_active(self.name, active)
 
-def load_all() -> list[Device]:
-    return [Device(**d) for d in queries.get_devices()]
+#def load_all() -> list[Device]:
+#    return [Device(**d) for d in queries.get_devices()]

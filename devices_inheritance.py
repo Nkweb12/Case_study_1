@@ -2,7 +2,7 @@ from typing import Self
 from datetime import datetime
 
 from serializable import Serializable
-from database import DatabaseConnector
+from database_inheritance import DatabaseConnector
 
 class Device(Serializable):
 
